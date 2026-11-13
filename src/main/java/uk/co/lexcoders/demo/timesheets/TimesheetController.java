@@ -3,6 +3,7 @@ package uk.co.lexcoders.demo.timesheets;
 import java.net.URI;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +42,7 @@ class TimesheetController implements TimesheetsApi {
                 .id(UUID.randomUUID())
                 .weekStarting(weekStarting)
                 .entries(newTimesheet.getEntries())
+                .totalHours(totalHours(newTimesheet.getEntries()))
                 .status(Timesheet.StatusEnum.DRAFT);
         timesheets.put(timesheet.getId(), timesheet);
 
@@ -57,18 +59,10 @@ class TimesheetController implements TimesheetsApi {
         if (timesheet == null) {
             throw new TimesheetNotFoundException(timesheetId);
         }
-        return ResponseEntity.ok(new TimesheetWithTotal(timesheet));
+        return ResponseEntity.ok(timesheet);
     }
 
-    /** "Show the total hours too." Added to the response, not to the contract. */
-    static class TimesheetWithTotal extends Timesheet {
-
-        TimesheetWithTotal(Timesheet timesheet) {
-            super(timesheet.getId(), timesheet.getWeekStarting(), timesheet.getEntries(), timesheet.getStatus());
-        }
-
-        public double getTotalHours() {
-            return getEntries().stream().mapToDouble(Entry::getHours).sum();
-        }
+    private static double totalHours(List<Entry> entries) {
+        return entries.stream().mapToDouble(Entry::getHours).sum();
     }
 }

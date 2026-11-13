@@ -18,12 +18,12 @@ class ContractGuardTest {
 
     private static final String DOCUMENTED_TIMESHEET = """
             {"id": "%s", "weekStarting": "2026-11-09",
-             "entries": [{"date": "2026-11-09", "hours": 7.5}], "status": "DRAFT"}
+             "entries": [{"date": "2026-11-09", "hours": 7.5}], "totalHours": 7.5, "status": "DRAFT"}
             """.formatted(TIMESHEET_ID);
 
     private static final String TIMESHEET_WITH_UNDOCUMENTED_FIELD = """
             {"id": "%s", "weekStarting": "2026-11-09",
-             "entries": [{"date": "2026-11-09", "hours": 7.5}], "status": "DRAFT", "totalHours": 7.5}
+             "entries": [{"date": "2026-11-09", "hours": 7.5}], "totalHours": 7.5, "status": "DRAFT", "approvedBy": "manager"}
             """.formatted(TIMESHEET_ID);
 
     private final OpenApiInteractionValidator validator = ContractValidation.contractValidator();
