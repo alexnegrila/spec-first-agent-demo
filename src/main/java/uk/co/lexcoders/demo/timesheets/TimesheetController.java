@@ -57,6 +57,18 @@ class TimesheetController implements TimesheetsApi {
         if (timesheet == null) {
             throw new TimesheetNotFoundException(timesheetId);
         }
-        return ResponseEntity.ok(timesheet);
+        return ResponseEntity.ok(new TimesheetWithTotal(timesheet));
+    }
+
+    /** "Show the total hours too." Added to the response, not to the contract. */
+    static class TimesheetWithTotal extends Timesheet {
+
+        TimesheetWithTotal(Timesheet timesheet) {
+            super(timesheet.getId(), timesheet.getWeekStarting(), timesheet.getEntries(), timesheet.getStatus());
+        }
+
+        public double getTotalHours() {
+            return getEntries().stream().mapToDouble(Entry::getHours).sum();
+        }
     }
 }
