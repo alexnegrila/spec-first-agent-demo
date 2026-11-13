@@ -1,0 +1,156 @@
+openapi: 3.0.3
+info:
+  title: Timesheet API
+  version: 1.0.0
+  description: |
+    A deliberately small API for the spec-first agent demo.
+
+    This file is the contract. The Spring interface is generated from it, and
+    every request the tests make is checked against it. To change what the API
+    accepts or returns, change this file first (see AGENTS.md).
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Timesheets
+    description: A contractor's weekly timesheets.
+paths:
+  /timesheets:
+    post:
+      tags: [Timesheets]
+      operationId: createTimesheet
+      summary: Create a draft timesheet for one week
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTimesheet'
+      responses:
+        '201':
+          description: The timesheet was created as a draft.
+          headers:
+            Location:
+              description: URL of the new timesheet.
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timesheet'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /timesheets/{timesheetId}:
+    get:
+      tags: [Timesheets]
+      operationId: getTimesheet
+      summary: Get one timesheet
+      parameters:
+        - name: timesheetId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The timesheet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timesheet'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    BadRequest:
+      description: The request does not meet this contract.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: There is no timesheet with that id.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    NewTimesheet:
+      type: object
+      additionalProperties: false
+      required: [weekStarting, entries]
+      properties:
+        weekStarting:
+          type: string
+          format: date
+          description: The Monday the week starts on.
+          example: '2026-11-09'
+        entries:
+          type: array
+          minItems: 1
+          maxItems: 7
+          items:
+            $ref: '#/components/schemas/Entry'
+    Entry:
+      type: object
+      additionalProperties: false
+      required: [date, hours]
+      properties:
+        date:
+          type: string
+          format: date
+          example: '2026-11-09'
+        hours:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 24
+          example: 7.5
+        note:
+          type: string
+          maxLength: 200
+          example: Spec review and ADR
+    Timesheet:
+      type: object
+      additionalProperties: false
+      required: [id, weekStarting, entries, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        weekStarting:
+          type: string
+          format: date
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entry'
+        status:
+          type: string
+          enum: [DRAFT, SUBMITTED]
+    Problem:
+      type: object
+      description: Problem details (RFC 9457).
+      additionalProperties: false
+      required: [title, status]
+      properties:
+        type:
+          type: string
+          example: about:blank
+        title:
+          type: string
+          example: Not Found
+        status:
+          type: integer
+          format: int32
+          example: 404
+        detail:
+          type: string
+        instance:
+          type: string
