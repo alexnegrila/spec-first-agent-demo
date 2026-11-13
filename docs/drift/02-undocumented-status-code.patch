@@ -1,0 +1,11 @@
+--- a/src/main/java/uk/co/lexcoders/demo/timesheets/TimesheetController.java
++++ b/src/main/java/uk/co/lexcoders/demo/timesheets/TimesheetController.java
+@@ -48,7 +48,7 @@
+                 .path("/{timesheetId}")
+                 .buildAndExpand(timesheet.getId())
+                 .toUri();
+-        return ResponseEntity.created(location).body(timesheet);
++        return ResponseEntity.ok().location(location).body(timesheet);
+     }
+ 
+     @Override
