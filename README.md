@@ -48,6 +48,13 @@ $ git apply docs/drift/02-undocumented-status-code.patch && ./mvnw verify
 
 `readsATimesheetBack` never asserts the status of the request that creates its timesheet. It fails anyway, because every exchange is checked.
 
+Each patch is also an open pull request, with its runs on GitHub:
+
+* [#1, the undocumented field](https://github.com/alexnegrila/spec-first-agent-demo/pull/1): the drift commit [fails](https://github.com/alexnegrila/spec-first-agent-demo/actions/runs/43466089775). The fix then goes through the contract first: [one commit changes only `api/openapi.yaml`](https://github.com/alexnegrila/spec-first-agent-demo/pull/1/commits/57ab9b4e2d6dce0cc80bcbd2ebda8d827d93bccb), [the next makes the code follow](https://github.com/alexnegrila/spec-first-agent-demo/pull/1/commits/a96a0faee8dfed278c462a1abe7e84e189d480d8), and that run [passes](https://github.com/alexnegrila/spec-first-agent-demo/actions/runs/43466365335).
+* [#2, the undocumented status code](https://github.com/alexnegrila/spec-first-agent-demo/pull/2): [fails](https://github.com/alexnegrila/spec-first-agent-demo/actions/runs/43466098911). Here the contract is right and the code is wrong, so the fix belongs in the code.
+
+GitHub deletes run logs after 90 days. The output above shows the same failures.
+
 Try it yourself:
 
 ```bash
@@ -56,7 +63,7 @@ git apply docs/drift/01-undocumented-response-field.patch
 git apply -R docs/drift/01-undocumented-response-field.patch
 ```
 
-The fix is spec first: add `totalHours` to the `Timesheet` schema in `api/openapi.yaml`, rebuild, then return it from the controller.
+The fix is spec first, as in [#1](https://github.com/alexnegrila/spec-first-agent-demo/pull/1): add `totalHours` to the `Timesheet` schema in `api/openapi.yaml`, rebuild, then return it from the controller.
 
 ## Run it
 
