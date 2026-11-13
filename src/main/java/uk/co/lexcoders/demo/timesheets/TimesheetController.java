@@ -48,7 +48,7 @@ class TimesheetController implements TimesheetsApi {
                 .path("/{timesheetId}")
                 .buildAndExpand(timesheet.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(timesheet);
+        return ResponseEntity.ok().location(location).body(timesheet);
     }
 
     @Override
