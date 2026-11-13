@@ -119,7 +119,7 @@ components:
     Timesheet:
       type: object
       additionalProperties: false
-      required: [id, weekStarting, entries, status]
+      required: [id, weekStarting, entries, totalHours, status]
       properties:
         id:
           type: string
@@ -131,6 +131,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Entry'
+        totalHours:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 168
+          description: The sum of the entries' hours.
+          example: 14.5
         status:
           type: string
           enum: [DRAFT, SUBMITTED]

@@ -51,7 +51,8 @@ class TimesheetApiTest {
         mvc.perform(get(URI.create(location)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.weekStarting").value("2026-11-09"))
-                .andExpect(jsonPath("$.entries.length()").value(2));
+                .andExpect(jsonPath("$.entries.length()").value(2))
+                .andExpect(jsonPath("$.totalHours").value(14.5));
     }
 
     @Test
